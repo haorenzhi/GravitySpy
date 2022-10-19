@@ -1,9 +1,9 @@
 import numpy
-from tensorflow.keras.applications.vgg16 import preprocess_input
+from keras.applications.vgg16 import preprocess_input
 from PIL import Image
-from tensorflow.keras.models import load_model
+from keras.models import load_model
 from .GS_utils import concatenate_views
-from tensorflow.keras import backend as K
+from keras import backend as K
 K.set_image_data_format("channels_last")
 
 
@@ -80,9 +80,9 @@ def label_glitches(image_data, model_name,
     # load a model and weights
     K.set_image_data_format(order_of_channels)
     if order_of_channels == 'channels_last':
-        reshape_order = (-1, img_rows, img_cols, 3)
+        reshape_order = (-1, img_rows, img_cols, 1)
     elif order_of_channels == 'channels_first':
-        reshape_order = (-1, 3, img_rows, img_cols)
+        reshape_order = (-1, 1, img_rows, img_cols)
     else:
         raise ValueError("Do not understand supplied channel order")
 
@@ -110,15 +110,12 @@ def label_glitches(image_data, model_name,
     test_set_unlabelled_x_4 = numpy.vstack(
         image_data[fourth_image_in_panel].iloc[0]).reshape(reshape_order)
 
-    concat_test_unlabelled =tf.concat([test_set_unlabelled_x_4,test_set_unlabelled_x_3,
-                                        test_set_unlabelled_x_2,test_set_unlabelled_x_1],axis=-1)
-
-    # concat_test_unlabelled = concatenate_views(test_set_unlabelled_x_1,
-    #                                            test_set_unlabelled_x_2,
-    #                                            test_set_unlabelled_x_3,
-    #                                            test_set_unlabelled_x_4,
-    #                                            [img_rows, img_cols],
-    #                                            False, order_of_channels)
+    concat_test_unlabelled = concatenate_views(test_set_unlabelled_x_1,
+                                               test_set_unlabelled_x_2,
+                                               test_set_unlabelled_x_3,
+                                               test_set_unlabelled_x_4,
+                                               [img_rows, img_cols],
+                                               False, order_of_channels)
 
     confidence_array = final_model.predict(concat_test_unlabelled, verbose=0)
     index_label = confidence_array.argmax(1)
