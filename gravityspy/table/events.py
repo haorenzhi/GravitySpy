@@ -24,7 +24,7 @@ from gwpy.table.filter import filter_table
 from gwpy.table.filters import in_segmentlist
 from sklearn.cluster import KMeans
 from astropy.table import Column
-from keras import backend as K
+from tensorflow.keras import backend as K
 K.set_image_data_format("channels_last")
 from keras.models import load_model
 

@@ -16,5 +16,5 @@
 # You should have received a copy of the GNU General Public License
 # along with gravityspy.  If not, see <http://www.gnu.org/licenses/>.
 
-from keras import backend as K
+from tensorflow.keras import backend as K
 K.set_image_data_format("channels_last")

@@ -5,11 +5,11 @@ processing the outputs into a more understandable way.
 For example ``tile_raster_images`` helps in generating a easy to grasp
 image from a set of samples or weights.
 """
-from keras import backend as K
-from keras.regularizers import l2
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, Flatten
-from keras.layers import MaxPooling2D, Conv2D
+from tensorflow.keras import backend as K
+from tensorflow.keras.regularizers import l2
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
+from tensorflow.keras.layers import MaxPooling2D, Conv2D
 
 import numpy as np
 

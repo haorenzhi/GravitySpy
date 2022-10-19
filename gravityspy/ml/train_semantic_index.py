@@ -1,13 +1,13 @@
-import keras.backend as K
+import tensorflow.keras.backend as K
 from GS_utils import (cosine_distance,
                       siamese_acc, eucl_dist_output_shape,
                       contrastive_loss, concatenate_views)
-from keras import regularizers
-from keras.applications.vgg16 import VGG16, preprocess_input
-from keras.layers import Input, Dense, GlobalAveragePooling2D, Lambda
-from keras.models import Model,load_model
-from keras.layers.advanced_activations import LeakyReLU
-from keras.optimizers import RMSprop
+from tensorflow.keras import regularizers
+from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input
+from tensorflow.keras.layers import Input, Dense, GlobalAveragePooling2D, Lambda
+from tensorflow.keras.models import Model,load_model
+from tensorflow.keras.layers.advanced_activations import LeakyReLU
+from tensorflow.keras.optimizers import RMSprop
 from itertools import combinations
 
 from gravityspy.utils import log

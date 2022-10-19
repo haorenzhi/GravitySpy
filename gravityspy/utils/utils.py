@@ -211,6 +211,74 @@ def save_q_scans(plot_directory, specsgrams,
 
     return
 
+def label_q_scans_new(plot_directory, path_to_cnn, **kwargs):
+    """Classify triggers in this table
+
+    Parameters:
+    -----------
+
+    Returns
+    -------
+    """
+    verbose = kwargs.pop('verbose', False)
+    order_of_channels = kwargs.pop('order_of_channels', 'channels_last')
+    image_order = kwargs.pop('image_order', ['0.5.png', '1.0.png', '2.0.png', '4.0.png'])
+
+    f = h5py.File(path_to_cnn, 'r')
+    # load the api gravityspy project cached class
+    classes = ['1080Lines', '1400Ripples', 'Air_Compressor', 'Blip', 'Chirp',
+         'Extremely_Loud', 'Helix', 'Koi_Fish', 'Light_Modulation', 'Low_Frequency_Burst', 'Low_Frequency_Lines', 'No_Glitch',
+          'None_of_the_Above', 'Paired_Doves', 'Power_Line', 'Repeating_Blips', 'Scattered_Light', 'Scratchy', 'Tomte', 'Violin_Mode', 'Wandering_Line', 'Whistle']
+
+    if verbose:
+        logger = log.Logger('Gravity Spy: Labelling Images')
+    # Since we created the images in a
+    # special temporary directory we can run os.listdir to get there full
+    # names so we can convert the images into ML readable format.
+    list_of_images = [ifile for ifile in os.listdir(plot_directory)
+                      if 'spectrogram' in ifile]   # change directly 
+
+    if verbose:
+        logger.info('Converting image to ML readable...')
+
+    image_data_for_cnn = pandas.DataFrame()
+    for image in list_of_images:
+        if verbose:
+            logger.info('Converting {0}'.format(image))
+
+        image_data = read_image.read_data_new(os.path.join(plot_directory, image), (600,600))
+        # image_data = read_image.read_grayscale(os.path.join(plot_directory, image),
+        #                                        resolution=0.3)
+        image_data_for_cnn[image] = [image_data]
+
+    # Now label the image
+    if verbose:
+        logger.info('Labelling image...')
+
+    scores, ml_label, ids, filename1, filename2, filename3, filename4 = \
+         label_glitches.label_glitches(image_data=image_data_for_cnn,
+                                       model_name='{0}'.format(path_to_cnn),
+                                       image_size=[600, 600],
+                                       order_of_channels=order_of_channels,
+                                       image_order=image_order,
+                                       verbose=verbose)
+
+    labels = numpy.array(classes)[ml_label]
+
+    scores_table = GravitySpyTable(scores, names=classes)
+
+    scores_table['Filename1'] = filename1
+    scores_table['Filename2'] = filename2
+    scores_table['Filename3'] = filename3
+    scores_table['Filename4'] = filename4
+    scores_table['gravityspy_id'] = ids
+    scores_table['ml_label'] = labels
+    scores_table['ml_confidence'] = scores.max(1)
+
+    return scores_table
+
+
+
 def label_q_scans(plot_directory, path_to_cnn, **kwargs):
     """Classify triggers in this table
 
@@ -227,7 +295,7 @@ def label_q_scans(plot_directory, path_to_cnn, **kwargs):
     f = h5py.File(path_to_cnn, 'r')
     # load the api gravityspy project cached class
     classes = kwargs.pop('classes',
-                         numpy.array(f['/labels/labels']).astype(str).T[0])
+                         numpy.array(f['/labels/labels']).astype(str).T[0])   # change
 
     if verbose:
         logger = log.Logger('Gravity Spy: Labelling Images')
@@ -235,7 +303,7 @@ def label_q_scans(plot_directory, path_to_cnn, **kwargs):
     # special temporary directory we can run os.listdir to get there full
     # names so we can convert the images into ML readable format.
     list_of_images = [ifile for ifile in os.listdir(plot_directory)
-                      if 'spectrogram' in ifile]
+                      if 'spectrogram' in ifile]   # change directly 
 
     if verbose:
         logger.info('Converting image to ML readable...')

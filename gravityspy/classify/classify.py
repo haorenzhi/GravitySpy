@@ -86,7 +86,11 @@ def classify(event_time, channel_name,
                        id_string=id_string,
                        **kwargs)
 
-    results = utils.label_q_scans(plot_directory=plot_directory,
+    # results = utils.label_q_scans(plot_directory=plot_directory,
+    #                               path_to_cnn=path_to_cnn,
+    #                               **kwargs)
+    
+    results = utils.label_q_scans_new(plot_directory=plot_directory,
                                   path_to_cnn=path_to_cnn,
                                   **kwargs)
 
